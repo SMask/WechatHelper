@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">WechatHelper</string>
+    <string name="open_setting">打开设置</string>
+
+    <string name="service_name">MaskWechatHelper</string>
+    <string name="service_description">MaskWechatHelper测试</string>
+
+</resources>

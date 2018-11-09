@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeNotificationStateChanged|typeWindowStateChanged|typeWindowContentChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagDefault"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/service_description"
+    android:notificationTimeout="100"
+    android:packageNames="com.tencent.mm"
+    android:settingsActivity="com.mask.wechathelper.MainActivity" />
+
+    <!--
+    accessibilityEventTypes：表示该服务对界面中的哪些变化感兴趣，即哪些事件通知，比如窗口打开，滑动，焦点变化，长按等。具体的值可以在AccessibilityEvent类中查到，如typeAllMask表示接受所有的事件通知
+    accessibilityFeedbackType：服务提供的反馈类型，feedbackGeneric通用反馈；
+    accessibilityFlags：辅助功能附加的标志，flagDefault默认的配置
+    canRetrieveWindowContent：辅助功能服务是否能够取回活动窗口内容的属性
+    description：对该无障碍功能的描述
+    notificationTimeout：接受事件的时间间隔，通常将其设置为100即可
+    packageNames：监听的应用包名，不填，默认监听所有应用的事件
+    settingsActivity：允许用户修改辅助功能的activity类名
+    -->
