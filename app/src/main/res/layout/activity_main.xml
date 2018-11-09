@@ -4,7 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="8dp"
     tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tv_state"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/state_success" />
+
+    <Button
+        android:id="@+id/btn_check"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/check"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_state" />
 
     <Button
         android:id="@+id/btn_open_setting"
@@ -13,6 +32,6 @@
         android:text="@string/open_setting"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_check" />
 
 </android.support.constraint.ConstraintLayout>

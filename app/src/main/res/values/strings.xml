@@ -1,6 +1,9 @@
 <resources>
 
     <string name="app_name">WechatHelper</string>
+    <string name="state_success">服务已启动</string>
+    <string name="state_fail">服务未启动</string>
+    <string name="check">检测服务状态</string>
     <string name="open_setting">打开设置</string>
 
     <string name="service_name">MaskWechatHelper</string>
