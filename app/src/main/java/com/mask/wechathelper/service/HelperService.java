@@ -20,7 +20,7 @@ public class HelperService extends AccessibilityService {
 
     private static final String GROUP_NAME = "测试";// 要加入的群名称
 
-    private static final int MAX_COUNT = 1;// 单次最大邀请人数
+    private static final int MAX_COUNT = 2;// 单次最大邀请人数
 
     private Handler handler = new Handler();
 
@@ -34,17 +34,16 @@ public class HelperService extends AccessibilityService {
         int eventType = event.getEventType();
         String className = event.getClassName().toString();
         Log.d(TAG, event.toString());
-
-//        if ("com.tencent.mm.ui.widget.a.c".equals(className)) {// Dialog
-//            dialogClick();
-//        }
-//        if ("com.tencent.mm.ui.base.p".equals(className)) {// Dialog
-//            dialogClick();
-//        }
-        dialogClick();
-
         switch (eventType) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+//                if ("com.tencent.mm.ui.widget.a.c".equals(className)) {// Dialog
+//                    dialogClick();
+//                }
+//                if ("com.tencent.mm.ui.base.p".equals(className)) {// Dialog
+//                    dialogClick();
+//                }
+                dialogClick();
+
                 switch (className) {
                     case "com.tencent.mm.ui.LauncherUI":// 微信首页
                         openGroup();
