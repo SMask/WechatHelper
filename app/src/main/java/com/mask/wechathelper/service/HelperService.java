@@ -26,20 +26,26 @@ public class HelperService extends AccessibilityService {
 
     @Override
     public void onInterrupt() {
-
+        Log.d(TAG, "onInterrupt");
     }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         int eventType = event.getEventType();
-        CharSequence className = event.getClassName();
+        String className = event.getClassName().toString();
         Log.d(TAG, event.toString());
+
+//        if ("com.tencent.mm.ui.widget.a.c".equals(className)) {// Dialog
+//            dialogClick();
+//        }
+//        if ("com.tencent.mm.ui.base.p".equals(className)) {// Dialog
+//            dialogClick();
+//        }
+        dialogClick();
+
         switch (eventType) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                switch (className.toString()) {
-                    case "com.tencent.mm.ui.widget.a.c":// Dialog
-                        dialogClick();
-                        break;
+                switch (className) {
                     case "com.tencent.mm.ui.LauncherUI":// 微信首页
                         openGroup();
                         break;
@@ -61,6 +67,13 @@ public class HelperService extends AccessibilityService {
     }
 
     /**
+     * 点击返回
+     */
+    private void performBackClick() {
+        performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
+    }
+
+    /**
      * 对话框自动点击
      */
     private void dialogClick() {
@@ -68,11 +81,34 @@ public class HelperService extends AccessibilityService {
         if (nodeInfo == null) {
             return;
         }
-        List<AccessibilityNodeInfo> nodeInfoList = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/au_");
+        List<AccessibilityNodeInfo> nodeInfoList = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/cvo");
+        if (nodeInfoList == null || nodeInfoList.size() <= 0) {
+            return;
+        }
+        String description = nodeInfoList.get(0).getText().toString();
+        boolean isFrequently = description.contains("频繁") && description.contains("稍后再试");
+
+        nodeInfoList = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/au_");
         if (nodeInfoList == null || nodeInfoList.size() <= 0) {
             return;
         }
         nodeInfoList.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+
+        if (isFrequently) {
+            // 主要是为了处理点击对话框后卡在群信息页面没反应的问题
+            try {
+                Thread.sleep(WAIT_TIME);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            performBackClick();
+        }
+
+        try {
+            Thread.sleep(WAIT_TIME);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -101,7 +137,15 @@ public class HelperService extends AccessibilityService {
                         if (!"群聊".equals(info.getText().toString())) {
                             continue;
                         }
-                        info.getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        AccessibilityNodeInfo parent = info.getParent();
+                        if (parent == null) {
+                            return;
+                        }
+                        parent = parent.getParent();
+                        if (parent == null) {
+                            return;
+                        }
+                        parent.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         break;
                     }
                 }
@@ -147,18 +191,14 @@ public class HelperService extends AccessibilityService {
      * 4.点击添加按钮(找不到则滚动)，打开添加成员页面
      */
     private void openSelectContact() {
-        final AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
-        if (nodeInfo == null) {
-            return;
-        }
-        List<AccessibilityNodeInfo> nodeInfoList = nodeInfo.findAccessibilityNodeInfosByViewId("android:id/list");
-        if (nodeInfoList == null || nodeInfoList.size() <= 0) {
-            return;
-        }
-        AccessibilityNodeInfo listNodeInfo = nodeInfoList.get(0);
-
         while (true) {
-            nodeInfoList = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/dnm");
+            AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
+            if (nodeInfo == null) {
+                performBackClick();
+                return;
+            }
+
+            List<AccessibilityNodeInfo> nodeInfoList = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/dnm");
             if (nodeInfoList == null || nodeInfoList.size() <= 0) {
                 return;
             }
@@ -169,7 +209,12 @@ public class HelperService extends AccessibilityService {
                 info.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 return;
             }
-            listNodeInfo.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
+
+            nodeInfoList = nodeInfo.findAccessibilityNodeInfosByViewId("android:id/list");
+            if (nodeInfoList == null || nodeInfoList.size() <= 0) {
+                return;
+            }
+            nodeInfoList.get(0).performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
 
             try {
                 Thread.sleep(WAIT_TIME);
@@ -201,11 +246,6 @@ public class HelperService extends AccessibilityService {
      * 选择成员
      */
     private void selectedMember() {
-        AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
-        if (nodeInfo == null) {
-            return;
-        }
-
         String firstNameNow = null;// 当前 倒数第一人名字
         String secondNameNow = null;// 当前 倒数第二人名字
         String firstNameLast;// 上次 倒数第一人名字
@@ -216,6 +256,11 @@ public class HelperService extends AccessibilityService {
 
             firstNameLast = firstNameNow;
             secondNameLast = secondNameNow;
+
+            AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
+            if (nodeInfo == null) {
+                return;
+            }
 
             List<AccessibilityNodeInfo> checkBoxList = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/x8");
             if (checkBoxList == null || checkBoxList.size() <= 0) {
@@ -229,6 +274,9 @@ public class HelperService extends AccessibilityService {
                     info.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     numNow++;
                 }
+            }
+            if (numNow >= MAX_COUNT) {
+                return;
             }
 
             List<AccessibilityNodeInfo> nameNodeInfoList = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/om");
