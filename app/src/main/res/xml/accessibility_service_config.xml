@@ -10,6 +10,7 @@
     android:settingsActivity="com.mask.wechathelper.MainActivity" />
 
     <!--
+    详细配置可查看 https://www.jianshu.com/p/ef01ce654302
     accessibilityEventTypes：表示该服务对界面中的哪些变化感兴趣，即哪些事件通知，比如窗口打开，滑动，焦点变化，长按等。具体的值可以在AccessibilityEvent类中查到，如typeAllMask表示接受所有的事件通知
     accessibilityFeedbackType：服务提供的反馈类型，feedbackGeneric通用反馈；
     accessibilityFlags：辅助功能附加的标志，flagDefault默认的配置
@@ -17,5 +18,5 @@
     description：对该无障碍功能的描述
     notificationTimeout：接受事件的时间间隔，通常将其设置为100即可
     packageNames：监听的应用包名，不填，默认监听所有应用的事件
-    settingsActivity：允许用户修改辅助功能的activity类名
+    settingsActivity：允许用户修改此服务的设置的活动组件名称，（如果不需要在运行时修改设置，可忽略该项）（不可在运行时修改）。修改设置，可使用：android.accessibilityservice.AccessibilityService.setServiceInfo(android.accessibilityservice.AccessibilityServiceInfo).
     -->
